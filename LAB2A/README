@@ -1,1 +1,75 @@
+NAME:Kedar Thiagarajan
+EMAIL: kedarbt@ucla.edu
+UID: 504539433
+***USING ONE SLIP DAY***
+
+This file contains the answers to my questions in the spec as well as a description of all the files included in my submission tarball.
+
+Question 2.1.1 - causing conflicts:
+
+It takes this many iterations in order to see errors because the number of threads running increases the chances that they will both enter the critical section at the same time, however this chance is still somewhat small and won't appear in the end result unless run many times. When it is run many times, the chances that two threads will enter the critical section at the same time. This is confirmed as when running just 1 thread there are no errors, and running higher number of threads (2,4,8) results in errors at lower number of iterations as the number of threads increases. 
+
+Fewer iterations fail so seldomly because the number of iterations is also the number of times the critical section is entered by each thread. Just by the law of large numbers, large number of iterations will lead to the expected value of errors. Fewer threads are not a good test of thread safety for this reason because the critical section is run only a few times. 
+
+Question 2.1.2 - cost of yielding:
+
+The --yield runs are so much slower because when the program calls sched_yield() it is giving up the CPU and passed to another process. This means every time sched_yield() is called there has to be a context switch which results in a lot of overhead. The additional time is going into performing these context switches both from the thread away and back to the thread as well as interruptions and loading the next thread. It is not possible to get valid timings using --yield because the context switches are very expensive compared to the actual programs cost. This results in a higher time than what the actual code would take. 
+
+Question 2.1.3 - measurement errors:
+
+The average cost per operation drops with increasing iterations because there is less time (relatively) spent allocating memory to threads and other objects compared to the amount of time actually spent in the thread_add program. Because of the loss in significance of overhead, the program seems to have a drop in cost per operation. 
+
+The "correct" cost is, once again by the law of large numbers, if we take a sample size approaching infinity, the cost per operation would converge close to the real value. 
+
+Question 2.1.4 - costs of serialization
+
+All the options perform similarly for low numbers of threads because the amount of time spent locked/spinning/yielding differs only slightly at a low level, but when added up over thousands of iterations the difference becomes massive. At low numbers of iterations, the amount of time spent waiting is very little no matter how it is done. 
+
+The protected operations slow down as the number of threads rises because there is more time spent waiting for another thread to finish using the critical section. This adds more time where each thread is blocked. 
+
+Question 2.2.1 - scalability of Mutex:
+
+The amount of time spent per mutex-protext operation in the list is larger than the amount of time spent per mutex-protected operation in the add file. This is because the operations are more complex in the list, and often take multiple instructions to execute unlike the simple addition performed in lab2_add. The general shape is a negative exponential because as the amount of operations increase the cost of the overhead decreases. The relative rates of decrease are higher in the add operations than in the list operations because the list operations are much more complex and the threads spend more time in the critical section. 
+
+Question 2.2.2 - scalability of spin locks:
+
+Spin locks are much more expensive than mutexes because they make the CPU use up time and resources. Because of this the threads that are waiting just spin and waste CPU time. However, mutexes perform atomic operations which reduce this overhead significantly. The spin locks and mutexes perform similarly at small numbers of threads and iterations but the spin locks start performing much worse as the iterations/threads increase and the curve rises a lot faster. Both curves have a somewhat negative exponential curve when comparing iterations but somewhat linear when checking vs number of threads. They have this shape because as i explained earlier, the cost per operation gets lower over time because of the decrease in relevance of the overhead related to creating threads. The cost per operation vs. number of threads graph behaves in the way I described because the more amount of threads there are the more time they spend waiting. 
+
+
+
+lab2_add.c:
+
+This file contains my implementation of the threaded add function. The available options are --threads=# --iterations=# --yield and --sync=[msc]. The sync option either uses a mutex, spin lock or compare and swap to create mutual exclusion for the critical sections. 
+
+lab2_list.c:
+
+This file contains my implementation of the threaded list operations. The actual list operations are contained in SortedList.c. The avaible options are --threads=# --iterations=# --yield=[idl] which stands for insert, delete and lookup respectively, and --sort= [ms] which is either a mutex or spin lock. 
+
+SortedList.h:
+
+This contains the SortedList structure declaration and the declaration of other globals. This was provided in the spec.
+
+SortedList.c:
+
+This contains the implementation of the SortedList functions. SortedList_insert, SortedList_delete, SortedList_lookup, SortedList_length.
+
+sample.sh:
+
+This contains all the test cases used to generate the plots.
+
+The png files:
+
+These were generated using the commands gnuplot ./lab2_[add/list].gp in order to create the appropriate graphs as shown in the spec.
+
+lab2_add.csv: 
+
+This file contains all the test results for lab2_add generated by sample.sh
+
+lab2_list.csv:
+
+This file contains all the test results for lab2_list generated by sample.sh
+
+Makefile:
+
+This file contains the default, tests, graphs, clean, and dist targets as required by the spec. 
 
