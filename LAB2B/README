@@ -2,40 +2,86 @@ NAME: Kedar Thiagarajan
 EMAIL: kedarbt@ucla.edu
 UID: 504539433
 
-This file contains a description of all the files included in the submission tarball as well as answers to all the questions in the spec. 
+This file contains a description of all the files included in the submission tarball as well
+as answers to all the questions in the spec. 
 
 Question 2.3.1 - Cycles in the basic list implementation:
 
-Most of the time is spent in the list insert, lookup and delete operations because there is probably not much time spent waiting for locks in 1 and 2 thread tests. In the high thread spin lock tests, most of the time is probably spent checking the lock because the spin-lock becomes very expensive on CPU cycles when there are many contesting threads. In the high thread mutex tests, most of the CPU cycles are probably spent on the list operations unless the list is short in which case it is probably spent in context switches.
+Most of the time is spent in the list insert, lookup and delete
+operations because there is probably not much time spent waiting
+for locks in 1 and 2 thread tests. In the high thread spin lock tests,
+most of the time is probably spent checking the lock because the spin-lock
+becomes very expensive on CPU cycles when there are many contesting threads.
+In the high thread mutex tests, most of the CPU cycles are probably spent on
+the list operations unless the list is short in which case it is probably
+spent in context switches.
 
 Question 2.3.2 - Execution Profiling:
 
-The lines of code that are consuming most of the cycles when the spin-lock version of the list exciser is run with a large number of threads is the line for the spin-lock check (according to profile.out). This operation becomes expensive with a large number of threads because lock wait time increases with a large number of threads. Each spin lock will repeatedly check for whether it can get the lock which wastes cycles. 
+The lines of code that are consuming most of the cycles
+when the spin-lock version of the list exciser is run 
+with a large number of threads is the line for the spin-lock
+check (according to profile.out). This operation becomes
+expensive with a large number of threads because lock wait time
+increases with a large number of threads. Each spin lock will
+repeatedly check for whether it can get the lock which wastes cycles. 
 
 Question 2.3.3 - Mutex Wait Time:
 
-The average lock wait-time rises dramatically with the number of contending threads because each contending thread added adds to the probability that two threads will try to access the same lock at the same time. The completion time per operation rises with the number of contending threads because it accounts for both contention time and the time to perform a context switch. This causes completion time to increase slightly. The completion time counts the time for the whole operation, while the wait time only counts the time for each thread. Threads can have many wait periods happening at the same time, so the wait time per operation increases a lot faster. 
+The average lock wait-time rises dramatically with the 
+number of contending threads because each contending 
+thread added adds to the probability that two threads 
+will try to access the same lock at the same time. The
+completion time per operation rises with the number of 
+contending threads because it accounts for both contention
+time and the time to perform a context switch. This causes
+completion time to increase slightly. The completion time
+counts the time for the whole operation, while the wait 
+time only counts the time for each thread. Threads can 
+have many wait periods happening at the same time, so the
+wait time per operation increases a lot faster. 
 
 Question 2.3.4 - Performance of Partitioned Lists:
 
-As the number of lists increases, the performance of the syncronized methods improved.	This is	because	each sub-list is individuallly locked which creates a finer granularity in the	code. This allows more threads to be working at	the same time with each holding a lock	on a seperate sublist. The throughput shouldcontinue to increase as the number of lists is increased because it reduces thelikelihood that a thread	has to wait on a lock to access	a list.
+As the number of lists increases, the performance
+of the syncronized methods improved.	This is	because
+each sub-list is individuallly locked which creates 
+a finer granularity in the	code. This allows more threads
+to be working at	the same time with each holding a lock
+on a seperate sublist. The throughput shouldcontinue to
+increase as the number of lists is increased because it 
+reduces thelikelihood that a thread	has to wait on a lock
+to access	a list.
 
 
-profile.out: This file is an execution profiling report showing where time was spent in the un-partitioned spin-lock implementation.
+profile.out: This file is an execution profiling report
+showing where time was spent in the un-partitioned spin-lock implementation.
 
-lab2b_1.png: This file shows throughput vs number of threads for mutex and spin-lock synchronized list operations
+lab2b_1.png: This file shows throughput vs number
+of threads for mutex and spin-lock synchronized list operations.
 
-lab2b_2.png: This file shows the mean time per mutex wait and mean time per operation for mutex-synchronized list operations.
+lab2b_2.png: This file shows the mean time per mutex
+wait and mean time per operation for mutex-synchronized
+list operations.
 
-lab2b_3.png: This file shows the successful iterations vs threads for each synchronization method.
+lab2b_3.png: This file shows the successful
+iterations vs threads for each synchronization
+method.
 
-lab2b_4.png This files shows throughput vs number of threads for mutex synchronized partitioned lists.
+lab2b_4.png This files shows throughput
+vs number of threads for mutex synchronized
+partitioned lists.
 
-lab2b_5.png: This file shows throughput vs number of threads for spin-lock synchronized partitioned lists.
+lab2b_5.png: This file shows throughput vs number of threads
+for spin-lock synchronized partitioned lists.
 
-Makefile: This file contains a working test, profile, graphs, dist, and clean target.
+Makefile: This file contains a working test, profile, graphs,
+dist, and clean target.
 
-lab2_list.c This is the source C program that implements the specified command line options (--threads --iterations --yield --sync --lists) in order to do parallel operations on a shared linked list.
+lab2_list.c This is the source C program that implements the 
+specified command line options (--threads --iterations --yield 
+--sync --lists) in order to do parallel operations on a shared
+linked list.
 
 lab2b_list.csv: This file contains results of all my test runs.
 
